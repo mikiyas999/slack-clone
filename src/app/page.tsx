@@ -1,9 +1,6 @@
 import Image from "next/image";
+import AuthScreen from "./features/auth/components/AuthScreen";
 
 export default function Home() {
-  return (
-    <div>
-      <h2 className="text-red-500 text-2xl">hello world</h2>
-    </div>
-  );
+  return <AuthScreen />;
 }
