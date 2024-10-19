@@ -13,17 +13,24 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignInCardProps {
   setState: (state: AuthFlow) => void;
 }
 export const SignInCard = ({ setState }: SignInCardProps) => {
+  const { signIn } = useAuthActions();
   const [account, setAccount] = useState({
     email: "",
     password: "",
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const signInByOAuth = (provider: "github" | "google") => {
+    setPending(true);
+    signIn(provider).finally(() => setPending(false));
+  };
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -44,7 +51,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
             size="sm"
             disabled={pending}
             variant="outline"
-            onClick={() => {}}
+            onClick={() => signInByOAuth("google")}
             className="w-full flex items-center justify-center gap-x-2"
           >
             <FcGoogle className="size-5" />
@@ -54,7 +61,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
             size="sm"
             disabled={pending}
             variant="outline"
-            onClick={() => {}}
+            onClick={() => signInByOAuth("github")}
             className="w-full flex items-center justify-center gap-x-2"
           >
             <FaGithub className="size-5" />
