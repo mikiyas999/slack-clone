@@ -13,11 +13,13 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
   setState: (state: AuthFlow) => void;
 }
 export const SignUpCard = ({ setState }: SignUpCardProps) => {
+  const { signIn } = useAuthActions();
   const [account, setAccount] = useState({
     name: "",
     email: "",
@@ -26,6 +28,32 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const signUpByOAuth = (provider: "github" | "google") => {
+    setPending(true);
+    signIn(provider).finally(() => setPending(false));
+  };
+
+  const signUpByEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (account.password !== account.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setPending(true);
+    signIn("password", {
+      name: account.name,
+      email: account.email,
+      password: account.password,
+      flow: "signUp",
+    })
+      .catch(() => {
+        setError("Something went wrong");
+      })
+      .finally(() => setPending(false));
+  };
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -35,7 +63,7 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
         </CardDescription>
       </CardHeader>
       {!!error && (
-        <span className="bg-destructive/15 p-3 rounded-md flex items-center text-white gap-x-2 text-sm">
+        <span className="bg-destructive/30 p-3 rounded-md flex items-center text-white gap-x-2 text-sm mb-2">
           <TriangleAlert className="size-4" />
           {error}
         </span>
@@ -46,7 +74,7 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
             size="sm"
             disabled={pending}
             variant="outline"
-            onClick={() => {}}
+            onClick={() => signUpByOAuth("google")}
             className="w-full flex items-center justify-center gap-x-2"
           >
             <FcGoogle className="size-5 " />
@@ -56,7 +84,7 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
             size="sm"
             disabled={pending}
             variant="outline"
-            onClick={() => {}}
+            onClick={() => signUpByOAuth("github")}
             className="w-full flex items-center justify-center gap-x-2"
           >
             <FaGithub className="size-5 " />
@@ -66,7 +94,7 @@ export const SignUpCard = ({ setState }: SignUpCardProps) => {
 
         <Separator className="my-2" />
 
-        <form className="space-y-4" onSubmit={() => {}}>
+        <form className="space-y-4" onSubmit={signUpByEmail}>
           <fieldset>
             <label
               htmlFor="name"

@@ -31,6 +31,20 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
     setPending(true);
     signIn(provider).finally(() => setPending(false));
   };
+
+  const signInByEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+    signIn("password", {
+      email: account.email,
+      password: account.password,
+      flow: "signIn",
+    })
+      .catch(() => {
+        setError("Invalid credentials");
+      })
+      .finally(() => setPending(false));
+  };
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -40,7 +54,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
         </CardDescription>
       </CardHeader>
       {!!error && (
-        <span className="bg-destructive/15 p-3 rounded-md flex items-center text-white gap-x-2 text-sm">
+        <span className="bg-destructive/30 p-3 rounded-md flex items-center text-white gap-x-2 text-sm mb-2">
           <TriangleAlert className="size-4" />
           {error}
         </span>
@@ -71,7 +85,7 @@ export const SignInCard = ({ setState }: SignInCardProps) => {
 
         <Separator className="my-2" />
 
-        <form className="space-y-4" onSubmit={() => {}}>
+        <form className="space-y-4" onSubmit={signInByEmail}>
           <fieldset>
             <label
               htmlFor="email"

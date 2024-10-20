@@ -2,7 +2,7 @@ import AuthScreen from "../features/auth/components/AuthScreen";
 
 const AuthPage = () => {
   return (
-    <div>
+    <div className="h-screen">
       <AuthScreen />
     </div>
   );
