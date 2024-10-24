@@ -19,7 +19,6 @@ export const UserButton = () => {
   const router = useRouter();
 
   const { user, isLoading } = useCurrentUser();
-  console.log(user);
   if (isLoading) {
     return (
       <span className="size-10 rounded-md bg-neutral-500 animate-pulse transition-colors" />
