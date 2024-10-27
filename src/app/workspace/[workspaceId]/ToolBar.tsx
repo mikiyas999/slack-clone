@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { InfoIcon, Search } from "lucide-react";
 import { useWorkspaceId } from "@/hooks/useWorkspaceId";
 import { useGetWorkspaceById } from "@/app/features/workspaces/api/useGetWorkspaceById";
+import { useGetChannels } from "@/app/features/channels/api/useGetchannels";
+import { useGetAllMembers } from "@/app/features/members/api/useGetAllMembers";
 
 const ToolBar = () => {
   const [open, setOpen] = useState(false);
@@ -25,8 +27,20 @@ const ToolBar = () => {
   const router = useRouter();
 
   const workspaceId = useWorkspaceId();
-
   const { workspace } = useGetWorkspaceById({ workspaceId });
+
+  const { channels } = useGetChannels({ workspaceId });
+  const { members } = useGetAllMembers({ workspaceId });
+
+  const onChannelClick = (channelId: string) => {
+    setOpen(false);
+    router.push(`/workspace${workspaceId}/channel/${channelId}`);
+  };
+
+  const onMemberClick = (memberId: string) => {
+    setOpen(false);
+    router.push(`/workspace${workspaceId}/member/${memberId}`);
+  };
 
   return (
     <header className="bg-[#481349] flex items-center justify-between h-10 p-1.5">
@@ -43,6 +57,35 @@ const ToolBar = () => {
             Search {workspace?.name}
           </span>
         </Button>
+        <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandInput placeholder="Type a command or search..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Channels">
+              {channels?.map((channel) => (
+                <CommandItem
+                  asChild
+                  key={channel._id}
+                  onSelect={() => onChannelClick(channel._id)}
+                >
+                  {channel.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Members">
+              {members?.map((member) => (
+                <CommandItem
+                  asChild
+                  key={member._id}
+                  onSelect={() => onMemberClick(member._id)}
+                >
+                  {member.user.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </CommandDialog>
       </div>
       <nav className="ml-auto flex-1 flex items-center justify-end">
         <Button size="sm" variant="transparent">
