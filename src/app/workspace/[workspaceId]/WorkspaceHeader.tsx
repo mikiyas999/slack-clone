@@ -64,7 +64,7 @@ const WorkspaceHeader = ({
             {isAdmin && (
               <>
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => setInviteModalIsOpen(true)}
                   className="w-full cursor-pointer py-1 text-sm text-neutral-700"
                 >
                   Invite people to this workspace

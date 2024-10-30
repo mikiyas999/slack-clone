@@ -70,7 +70,7 @@ export const InviteModal = ({
     <>
       <ConfirmDialog />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="p-0 bg-neutral-50 overflow-hidden">
+        <DialogContent className="p-2 bg-neutral-50 overflow-hidden">
           <DialogHeader className="p-4 border-b bg-white">
             <DialogTitle>Invite People to {name}</DialogTitle>
             <DialogDescription>
@@ -86,7 +86,7 @@ export const InviteModal = ({
               <Copy className="size-4 ml-2" />
             </Button>
           </div>
-          <div className="flex items-center justify-center w-full">
+          <div className="flex items-center justify-center w-full gap-x-2">
             <Button
               size="sm"
               variant="outline"
