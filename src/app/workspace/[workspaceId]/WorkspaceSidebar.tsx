@@ -17,6 +17,8 @@ import { useChannelModalState } from "@/app/features/channels/store/useChannelMo
 import { useGetAllMembers } from "@/app/features/members/api/useGetAllMembers";
 import { useGetChannels } from "@/app/features/channels/api/useGetchannels";
 import { useGetMember } from "@/app/features/members/api/useGetmembers";
+import { WorkspaceSection } from "./WorkSpaceSecton";
+import { UserItem } from "./userItem";
 
 const WorkspaceSidebar = () => {
   const memberId = useMemberId();
@@ -64,6 +66,36 @@ const WorkspaceSidebar = () => {
         <SidebarItem id="threads" label="Threads" icon={MessageSquareText} />
         <SidebarItem id="drafts" label="Drafts & Sent" icon={SendHorizonal} />
       </div>
+      <WorkspaceSection
+        label="Channels"
+        hint="New Channels"
+        onNew={member.role === "admin" ? () => setOpen(true) : undefined}
+      >
+        {channels?.map((item) => (
+          <SidebarItem
+            id={item._id}
+            key={item._id}
+            icon={HashIcon}
+            label={item.name}
+            variant={channelId === item._id ? "active" : "default"}
+          />
+        ))}
+      </WorkspaceSection>
+      <WorkspaceSection
+        label="Direct Messages"
+        hint="New Direct Messages"
+        onNew={() => {}}
+      >
+        {members?.map((item) => (
+          <UserItem
+            id={item._id}
+            key={item._id}
+            label={item.user.name}
+            image={item.user.image}
+            variant={memberId === item._id ? "active" : "default"}
+          />
+        ))}
+      </WorkspaceSection>
     </aside>
   );
 };
