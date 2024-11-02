@@ -58,3 +58,101 @@ export const create = mutation({
     return channelId;
   },
 });
+
+export const getById = query({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, { channelId }) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) return null;
+
+    const channel = await ctx.db.get(channelId);
+
+    if (!channel) return null;
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!member) return null;
+
+    return channel;
+  },
+});
+
+export const update = mutation({
+  args: {
+    channelName: v.string(),
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, { channelId, channelName }) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) throw new Error("Unauthorized");
+
+    const channel = await ctx.db.get(channelId);
+
+    if (!channel) throw new Error("Channel not found");
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") throw new Error("Unauthorized");
+
+    const parsedChannelName = channelName.replace(/\s+/g, "-").toLowerCase();
+
+    await ctx.db.patch(channelId, {
+      name: parsedChannelName,
+    });
+
+    return channelId;
+  },
+});
+
+export const remove = mutation({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, { channelId }) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) throw new Error("Unauthorized");
+
+    const channel = await ctx.db.get(channelId);
+
+    if (!channel) throw new Error("Channel not found");
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", channel.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!member || member.role !== "admin") throw new Error("Unauthorized");
+
+    const [messages] = await Promise.all([
+      ctx.db
+        .query("messages")
+        .withIndex("by_channel_id", (q) => q.eq("channelId", channelId))
+        .collect(),
+    ]);
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    await ctx.db.delete(channelId);
+
+    return channelId;
+  },
+});
