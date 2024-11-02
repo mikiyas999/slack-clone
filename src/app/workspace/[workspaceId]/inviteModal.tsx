@@ -86,7 +86,7 @@ export const InviteModal = ({
               <Copy className="size-4 ml-2" />
             </Button>
           </div>
-          <div className="flex items-center justify-center w-full gap-x-2">
+          <div className="flex items-center justify-evenly mb-3  w-full ">
             <Button
               size="sm"
               variant="outline"

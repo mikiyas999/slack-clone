@@ -27,7 +27,7 @@ export const UserButton = () => {
 
   if (!user) return null;
 
-  const avatarFallback = user.name!.charAt(0).toUpperCase();
+  const avatarFallback = user.name!?.charAt(0).toUpperCase();
   const handleSubmit = async () => {
     await signOut();
     router.push("/auth");
