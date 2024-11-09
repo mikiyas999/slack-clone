@@ -27,3 +27,4 @@ Key Features:
 💬 Direct messaging
 
 👥 User profiles
+and other
