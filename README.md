@@ -25,6 +25,3 @@ Key Features:
 📧 Invite system / Invite codes
 
 💬 Direct messaging
-
-👥 User profiles
-and other
